@@ -1,11 +1,11 @@
 ===========================================
-Lizenz für Griefing Counter (Deutsch)
+Lizenz für SC-CombatLog (Deutsch)
 ===========================================
 Copyright (c) 2025
 Mittelalter Gouda. Alle Rechte vorbehalten.
 
 1. Gegenstand der Lizenz  
-Der Quellcode dieses Projekts ("Griefing Counter") wird ausschließlich  
+Der Quellcode dieses Projekts ("SC-CombatLog") wird ausschließlich  
 zum Zweck der Einsicht und Überprüfung bereitgestellt. Hiermit wird  
 kein weitergehendes Nutzungsrecht (einschließlich, aber nicht beschränkt  
 auf Vervielfältigung, Modifikation, Verbreitung, öffentliche Zugänglichmachung  
@@ -108,13 +108,13 @@ Sollte es zu Unstimmigkeiten zwischen der deutschen und der englischen
 Fassung dieser Lizenz kommen, ist die deutsche Version maßgeblich.
 
 ===========================================
-License for Griefing Counter (English)
+License for SC-CombatLog (English)
 ===========================================
 Copyright (c) 2025
 Mittelalter Gouda. All rights reserved.
 
 1. Subject Matter of the License  
-The source code of this project ("Griefing Counter") is provided solely  
+The source code of this project ("SC-CombatLog") is provided solely  
 for the purpose of viewing and review. No further rights of use are granted  
 (including, but not limited to, reproduction, modification, distribution,  
 public accessibility, or any other form of exploitation) – neither for commercial  

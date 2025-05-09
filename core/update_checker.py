@@ -21,11 +21,11 @@ logger = logging.getLogger(__name__)
 # Der GitHub-Username und Repo-Name sollten in einer Konfigurationsdatei gespeichert
 # oder zur Laufzeit durch GitHub Actions gesetzt werden
 GITHUB_REPO_OWNER = os.environ.get('GITHUB_REPOSITORY_OWNER', 'mittelaltergouda')
-GITHUB_REPO_NAME = "SC-Griefing-Counter" # Verwende das Hauptrepo statt eines separaten Release-Repos
+GITHUB_REPO_NAME = "SC-CombatLog" # Verwende das Hauptrepo statt eines separaten Release-Repos
 
 # Datei, die anzeigt, dass ein Update durchgeführt wurde
 UPDATE_MARKER_FILE = os.path.join(os.environ.get('APPDATA', os.path.expanduser('~')), 
-                                  "SC-Griefing-Counter", "update_performed.marker")
+                                  "SC-CombatLog", "update_performed.marker")
 
 def check_for_updates(current_version):
     """
@@ -103,7 +103,7 @@ def start_updater():
         fixed_script_path = os.path.join(os.path.dirname(sys.executable), "gc-updater-fixed.py")
         
         # Für Entwicklungsumgebung (wenn nicht als exe ausgeführt)
-        if not os.path.exists(updater_path) and os.path.basename(sys.executable) != "griefing_counter.exe":
+        if not os.path.exists(updater_path) and os.path.basename(sys.executable) != "sc-combatlog.exe":
             # Suche nach den Skript-Varianten
             updater_script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gc-updater.py")
             fixed_script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gc-updater-fixed.py")

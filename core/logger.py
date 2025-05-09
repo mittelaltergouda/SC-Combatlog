@@ -45,9 +45,9 @@ def setup_logging(general_log_folder, error_log_folder, debug_log_folder=DEBUG_L
 
     # Zeitstempel für die Log-Dateien
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    general_log_file = os.path.join(general_log_folder, f"griefing_counter_{timestamp}.log")
-    error_log_file = os.path.join(error_log_folder, f"griefing_counter_errors_{timestamp}.log")
-    debug_log_file = os.path.join(debug_log_folder, f"griefing_counter_debug_{timestamp}.log") if debug_log_folder else None
+    general_log_file = os.path.join(general_log_folder, f"sc_combatlog_{timestamp}.log")
+    error_log_file = os.path.join(error_log_folder, f"sc_combatlog_errors_{timestamp}.log")
+    debug_log_file = os.path.join(debug_log_folder, f"sc_combatlog_debug_{timestamp}.log") if debug_log_folder else None
 
     # Logger konfigurieren
     logger = logging.getLogger(app_logger_name) if app_logger_name else logging.getLogger()
@@ -67,7 +67,7 @@ def setup_logging(general_log_folder, error_log_folder, debug_log_folder=DEBUG_L
 
     # Debug-Log-Datei (optional)
     if debug_log_folder:
-        debug_log_file = os.path.join(debug_log_folder, f"griefing_counter_debug_{timestamp}.log")
+        debug_log_file = os.path.join(debug_log_folder, f"sc_combatlog_debug_{timestamp}.log")
         debug_handler = RotatingFileHandler(debug_log_file, maxBytes=5 * 1024 * 1024, backupCount=3, encoding="utf-8")
         debug_handler.setLevel(logging.DEBUG)
         debug_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - [%(module)s:%(lineno)d] - %(message)s"))

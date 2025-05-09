@@ -1,6 +1,6 @@
-# Contribution Guidelines for SC-Griefing-Counter
+# Contribution Guidelines for SC-CombatLog
 
-Thank you for your interest in contributing to SC-Griefing-Counter! We appreciate all support – whether it's code improvements, new features, or documentation contributions. Please review the following guidelines before submitting a pull request.
+Thank you for your interest in contributing to SC-CombatLog! We appreciate all support – whether it's code improvements, new features, or documentation contributions. Please review the following guidelines before submitting a pull request.
 
 ## License Terms for Contributions
 
@@ -50,9 +50,9 @@ Please note:
 
 ---
 
-# Beitragsrichtlinien für SC-Griefing-Counter
+# Beitragsrichtlinien für SC-CombatLog
 
-Vielen Dank für Ihr Interesse, zum SC-Griefing-Counter beizutragen! Wir schätzen jede Unterstützung – sei es in Form von Code-Verbesserungen, neuen Features oder Dokumentationsbeiträgen. Bitte beachten Sie die folgenden Richtlinien, bevor Sie einen Pull Request einreichen.
+Vielen Dank für Ihr Interesse, zu SC-CombatLog beizutragen! Wir schätzen jede Unterstützung – sei es in Form von Code-Verbesserungen, neuen Features oder Dokumentationsbeiträgen. Bitte beachten Sie die folgenden Richtlinien, bevor Sie einen Pull Request einreichen.
 
 ## Lizenzbedingungen für Beiträge
 

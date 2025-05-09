@@ -117,15 +117,15 @@ The automated build process performs the following steps:
 
 The build process creates the following outputs:
 
-1. **Windows Installer** (`SC-Griefing-Counter-Setup-x.y.z.exe`):
+1. **Windows Installer** (`SC-CombatLog-Setup-x.y.z.exe`):
    - A complete installer with all required files
    - Creates desktop and start menu shortcuts
 
-2. **Portable ZIP** (`SC-Griefing-Counter-x.y.z.zip`):
+2. **Portable ZIP** (`SC-CombatLog-x.y.z.zip`):
    - A ZIP archive with the compiled binaries
    - Can be extracted and run from any location
 
-3. **Source Code ZIP** (`SC-Griefing-Counter-Source-x.y.z.zip`):
+3. **Source Code ZIP** (`SC-CombatLog-Source-x.y.z.zip`):
    - A ZIP archive with the complete source code
 
 4. **SHA256 Hash**:

@@ -1,9 +1,8 @@
-"""
-gc-updater.py
 
-Eigenständiges Update-Tool für den Star Citizen Griefing Counter.
-Lädt die neueste Version herunter, überprüft den SHA256-Hash und ersetzt die alte Version.
-"""
+# updater.py
+#
+# Eigenständiges Update-Tool für SC-CombatLog.
+# Lädt die neueste Version herunter, überprüft den SHA256-Hash und ersetzt die alte Version.
 
 import os
 import sys
@@ -26,7 +25,7 @@ try:
     # Pfad zum AppData-Verzeichnis für Logdateien
     def get_app_data_path():
         """Gibt den Pfad zum Anwendungsdatenverzeichnis im AppData-Ordner zurück."""
-        app_name = "SC-Griefing-Counter"
+        app_name = "SC-CombatLog"
         
         # Unter Windows AppData-Verzeichnis verwenden
         app_data = os.path.join(os.environ.get('APPDATA', os.path.expanduser('~')), app_name)
@@ -47,7 +46,7 @@ def debug_write(message):
     except Exception as e:
         # Falls direktes Schreiben fehlschlägt, versuchen wir es im temp-Verzeichnis
         try:
-            temp_log = os.path.join(tempfile.gettempdir(), "gc_updater_debug.log")
+            temp_log = os.path.join(tempfile.gettempdir(), "sc_combatlog_updater_debug.log")
             with open(temp_log, 'a') as f:
                 f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Error writing to primary log: {e}\n")
                 f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {message}\n")
@@ -73,7 +72,7 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-logger = logging.getLogger("GC-Updater")
+logger = logging.getLogger("SCCL-Updater")
 
 debug_write(f"Logger konfiguriert. Log-Datei: {log_file}")
 
@@ -83,7 +82,7 @@ GITHUB_REPO_OWNER = "mittelaltergouda"  # Aktualisierter Repository-Besitzer
 if os.environ.get('GITHUB_REPOSITORY_OWNER'):
     GITHUB_REPO_OWNER = os.environ.get('GITHUB_REPOSITORY_OWNER')
     
-GITHUB_REPO_NAME = "SC-Griefing-Counter"  # Verwende das Hauptrepo statt eines separaten Release-Repos
+GITHUB_REPO_NAME = "SC-CombatLog"  # Verwende das Hauptrepo statt eines separaten Release-Repos
 
 def is_admin():
     """Prüft, ob das Programm mit Administratorrechten läuft"""
@@ -248,7 +247,7 @@ def show_message_box(title, message):
 
 def main():
     try:
-        logger.info("Star Citizen Griefing Counter Updater startet...")
+        logger.info("SC-CombatLog Updater startet...")
         logger.info(f"Ausgeführt von: {sys.executable}")
         logger.info(f"Arbeitsverzeichnis: {os.getcwd()}")
         logger.info(f"Administratorrechte: {'Ja' if is_admin() else 'Nein'}")
@@ -269,7 +268,7 @@ def main():
         # Temporäres Verzeichnis mit besserer Fehlerbehandlung
         try:
             # Verwende das tempfile-Modul für bessere Kompatibilität
-            temp_dir = tempfile.mkdtemp(prefix="gc_updater_")
+            temp_dir = tempfile.mkdtemp(prefix="sc_combatlog_updater_")
             logger.info(f"Temporäres Verzeichnis erstellt: {temp_dir}")
             debug_write(f"Temp-Verzeichnis: {temp_dir}")
         except Exception as e:
@@ -341,8 +340,8 @@ def main():
             
             log_message("1. Lade die neueste Version herunter...")
             # Dateien herunterladen
-            exe_local_path = os.path.join(temp_dir, "griefing_counter.exe")
-            hash_local_path = os.path.join(temp_dir, "griefing_counter.exe.sha256")
+            exe_local_path = os.path.join(temp_dir, "sc-combatlog.exe")
+            hash_local_path = os.path.join(temp_dir, "sc-combatlog.exe.sha256")
             
             logger.info("Lade neue Version herunter...")
             if not download_file(download_url, exe_local_path):
@@ -352,7 +351,7 @@ def main():
                     extracted_exe = None
                     for root, dirs, files in os.walk(temp_dir):
                         for file in files:
-                            if file.lower() == "griefing_counter.exe":
+                            if file.lower() == "sc-combatlog.exe":
                                 extracted_exe = os.path.join(root, file)
                                 break
                     
@@ -373,8 +372,8 @@ def main():
             
             # Aktuelle EXE ermitteln
             current_exe = sys.executable
-            if os.path.basename(current_exe).lower() == "gc-updater.exe":
-                main_exe = os.path.join(os.path.dirname(current_exe), "griefing_counter.exe")
+            if os.path.basename(current_exe).lower() == "updater.exe":
+                main_exe = os.path.join(os.path.dirname(current_exe), "sc-combatlog.exe")
             else:
                 main_exe = current_exe
             
@@ -387,9 +386,9 @@ def main():
                     logger.info("Suche nach laufenden Instanzen...")
                     found_process = False
                     for proc in os.popen('tasklist').readlines():
-                        if "griefing_counter.exe" in proc.lower():
+                        if "sc-combatlog.exe" in proc.lower():
                             logger.info("Beende laufende Instanz...")
-                            os.system('taskkill /f /im griefing_counter.exe')
+                            os.system('taskkill /f /im sc-combatlog.exe')
                             found_process = True
                             time.sleep(2)
                             break
@@ -475,7 +474,7 @@ def main():
             
             # Zeige eine Erfolgsmeldung statt Konsoleneingabe zu verwenden
             show_message_box("Update abgeschlossen", 
-                          "Update erfolgreich abgeschlossen!\nVielen Dank, dass Sie den SC Griefing Counter verwenden.")
+                          "Update erfolgreich abgeschlossen!\nVielen Dank, dass Sie SC-CombatLog verwenden.")
             
         except Exception as e:
             logger.error(f"Fehler beim Update: {str(e)}")

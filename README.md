@@ -1,16 +1,16 @@
-# SC-Griefing-Counter
+# SC-CombatLog
 
 ## License
 The use of this tool is subject to the terms of the license described in the [LICENSE.txt](./LICENSE.txt) file.
 
 ## Introduction
-The SC-Griefing-Counter is a tool developed to track and analyze player activities in Star Citizen. It offers features such as kill counting, statistics tracking, and leaderboard displays. This tool is particularly useful for players who want to monitor their performance or create detailed reports about their activities.
+SC-CombatLog ist ein Tool zur Analyse und Auswertung von Kampflogs in Star Citizen. Es bietet Funktionen wie Kill-Zählung, Statistik-Tracking und Leaderboard-Anzeige. Das Tool ist besonders nützlich für Spieler, die ihre Performance überwachen oder detaillierte Berichte über ihre Aktivitäten erstellen möchten.
 
 ## Privacy
-**Important**: All user data is stored exclusively locally on your computer and is never transmitted to external servers. The SC-Griefing-Counter respects your privacy and works without an internet connection, except for optional update checks.
+**Wichtig**: Alle Nutzerdaten werden ausschließlich lokal auf deinem Computer gespeichert und niemals an externe Server übertragen. SC-CombatLog respektiert deine Privatsphäre und funktioniert auch ohne Internetverbindung (außer für optionale Update-Prüfungen).
 
 ## Requirements
-To use the SC-Griefing-Counter, you need either:
+Um SC-CombatLog zu nutzen, benötigst du entweder:
 - The pre-compiled .exe file or installer from the latest release
 - OR
 - **Python 3.12** or higher and the following Python libraries:
@@ -22,14 +22,14 @@ To use the SC-Griefing-Counter, you need either:
 
 ## Installation
 1. **Installer Version (recommended)**:
-   - Download the latest version of the installer (`SC-Griefing-Counter-Setup-x.x.x.exe`) from the [releases page](https://github.com/YourRepo/SC-Griefing-Counter/releases).
+   - Lade die aktuelle Version des Installers (`SC-CombatLog-Setup-x.x.x.exe`) von der [Releases-Seite](https://github.com/YourRepo/SC-CombatLog/releases) herunter.
    - Run the installer and follow the on-screen instructions.
    - A shortcut will be created on the desktop and in the start menu.
 
 2. **Portable Version**:
-   - Download the ZIP archive (`SC-Griefing-Counter-x.x.x.zip`) from the [releases page](https://github.com/YourRepo/SC-Griefing-Counter/releases).
+   - Lade das ZIP-Archiv (`SC-CombatLog-x.x.x.zip`) von der [Releases-Seite](https://github.com/YourRepo/SC-CombatLog/releases) herunter.
    - Extract the archive to any location.
-   - Start the application by double-clicking on `griefing_counter.exe`.
+   - Starte die Anwendung durch Doppelklick auf `sc-combatlog.exe`.
 
 3. **Source Code Version**:
    - Make sure Python 3.12 or higher is installed on your system. You can download Python from [python.org](https://www.python.org/).
@@ -38,9 +38,9 @@ To use the SC-Griefing-Counter, you need either:
      pip install watchdog tkcalendar
      ```
    - Clone or download the repository.
-   - Run the `y_start_griefing_counter.bat` file or start the program directly from the command line:
+   - Führe die Datei `y_start_sc_combatlog.bat` aus oder starte das Programm direkt über die Kommandozeile:
      ```bash
-     python griefing_counter_tk.py
+     python sc_combatlog_tk.py
      ```
 
 ## Starting the Program
@@ -49,13 +49,13 @@ To use the SC-Griefing-Counter, you need either:
 
 2. **Portable Version**:
    - Navigate to the directory where you extracted the program.
-   - Double-click on the `griefing_counter.exe` file.
+   - Doppelklicke auf die Datei `sc-combatlog.exe`.
 
 3. **Source Code Version**:
-   - Run the `y_start_griefing_counter.bat` file.
+   - Führe die Datei `y_start_sc_combatlog.bat` aus.
    - Alternatively, you can start the program directly from the command line:
      ```bash
-     python griefing_counter_tk.py
+     python sc_combatlog_tk.py
      ```
 
 ## Features
