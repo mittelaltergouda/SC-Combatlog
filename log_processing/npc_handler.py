@@ -1,5 +1,5 @@
 import re
-import database
+from data import database
 import logging
 
 # Logger für diese Datei einrichten
@@ -89,15 +89,15 @@ def get_npc_category(npc_name):
     Returns the category for the cleaned NPC name from DB, or None if not found.
     """
     try:
+        from data.models import NPCCategory
+        session = database.get_session()
         cleaned = clean_npc_name(npc_name)
-        res = database.fetch_query(
-            "SELECT category FROM npc_categories WHERE npc_name=?",
-            (cleaned,)
-        )
-        if res and len(res) > 0:
-            return res[0][0]
+        cat = session.query(NPCCategory).filter_by(name=cleaned).first()
+        session.close()
+        if cat:
+            return cat.category
         return None
-    except database.DatabaseError as e:
+    except Exception as e:
         logger.error(f"Fehler beim Abrufen der NPC-Kategorie für {npc_name}: {str(e)}")
         return None
 
@@ -106,13 +106,13 @@ def load_all_npc_categories():
     Loads all npc_name->category from the DB into a dictionary.
     """
     try:
-        rows = database.fetch_query("SELECT npc_name, category FROM npc_categories")
-        out_dict = {}
-        if rows:
-            for (name, cat) in rows:
-                out_dict[name] = cat
+        from data.models import NPCCategory
+        session = database.get_session()
+        rows = session.query(NPCCategory).all()
+        out_dict = {row.name: row.category for row in rows}
+        session.close()
         return out_dict
-    except database.DatabaseError as e:
+    except Exception as e:
         logger.error(f"Fehler beim Laden aller NPC-Kategorien: {str(e)}")
         return {}
 
@@ -121,26 +121,26 @@ def recategorize_uncategorized():
     Checks all NPCs in npc_categories that are 'uncategorized' and tries to recategorize them.
     """
     try:
-        rows = database.fetch_query(
-            "SELECT npc_name, category FROM npc_categories WHERE category='uncategorized'"
-        )
+        from data.models import NPCCategory
+        session = database.get_session()
+        rows = session.query(NPCCategory).filter_by(category='uncategorized').all()
         if not rows:
+            session.close()
             return
-            
         updated_count = 0
-        for (npc_name, old_cat) in rows:
+        for row in rows:
+            npc_name = row.name
+            old_cat = row.category
             new_cat = auto_categorize_npc(npc_name)
             if new_cat != "uncategorized":
-                database.execute_query(
-                    "UPDATE npc_categories SET category=? WHERE npc_name=?",
-                    (new_cat, npc_name)
-                )
+                row.category = new_cat
                 logger.info(f"Recategorized {npc_name} from {old_cat} to {new_cat}")
                 updated_count += 1
-                
         if updated_count > 0:
+            session.commit()
             logger.debug(f"Insgesamt {updated_count} NPCs neu kategorisiert")
-    except database.DatabaseError as e:
+        session.close()
+    except Exception as e:
         logger.error(f"Fehler bei der Neukategorisierung von NPCs: {str(e)}")
 
 def save_npc_category(npc_name, default_category="uncategorized"):
@@ -149,22 +149,27 @@ def save_npc_category(npc_name, default_category="uncategorized"):
     Afterwards, calls recategorize_uncategorized() once.
     """
     try:
+        from data.models import NPCCategory
+        session = database.get_session()
         cleaned = clean_npc_name(npc_name)
-        existing = get_npc_category(cleaned)
+        existing = session.query(NPCCategory).filter_by(name=cleaned).first()
         if existing is not None:
+            session.close()
             return  # Already known
 
         cat = auto_categorize_npc(cleaned)
         if cat == "uncategorized" and default_category != "uncategorized":
             cat = default_category
 
-        database.execute_query(
-            "INSERT OR IGNORE INTO npc_categories (npc_name, category) VALUES (?, ?)",
-            (cleaned, cat)
-        )
+        npc = NPCCategory(name=cleaned, category=cat)
+        session.add(npc)
+        try:
+            session.commit()
+        except Exception:
+            session.rollback()  # Bei Unique-Constraint-Verletzung ("INSERT OR IGNORE")
         logger.info(f"NPC kategorisiert: {cleaned}, Kategorie={cat}")
-        
         # Versuche, unkategorisierte NPCs neu zu kategorisieren
+        session.close()
         recategorize_uncategorized()
-    except database.DatabaseError as e:
+    except Exception as e:
         logger.error(f"Fehler beim Speichern der NPC-Kategorie für {npc_name}: {str(e)}")

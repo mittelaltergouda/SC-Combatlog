@@ -16,7 +16,7 @@ import os
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
 import traceback
-from config import LOGGING_ENABLED, LOGGING_LEVEL, DEBUG_LOG_FOLDER
+from core.config import LOGGING_ENABLED, LOGGING_LEVEL, DEBUG_LOG_FOLDER
 
 def setup_logging(general_log_folder, error_log_folder, debug_log_folder=DEBUG_LOG_FOLDER, log_level=LOGGING_LEVEL, app_logger_name=None, enable_logging=LOGGING_ENABLED):
     """

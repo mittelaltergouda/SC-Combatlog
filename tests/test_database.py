@@ -7,8 +7,8 @@ import tempfile
 # Pfad zum Projektverzeichnis hinzufügen, damit die Module importiert werden können
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import database
-import config
+from data import database
+from core import config
 
 
 class TestDatabase(unittest.TestCase):

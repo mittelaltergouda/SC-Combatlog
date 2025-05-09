@@ -11,6 +11,8 @@ import json
 import subprocess
 import requests
 import logging
+from core import config
+from data import database
 import shutil
 from packaging import version
 
@@ -195,12 +197,12 @@ def clean_appdata():
     """
     Löscht Logs und Datenbank aus dem AppData-Verzeichnis.
     """
-    import config  # Importiere hier, um zirkuläre Imports zu vermeiden
+    from core import config  # Importiere hier, um zirkuläre Imports zu vermeiden
     
     try:
         # Schließe die Datenbank, falls geöffnet
         try:
-            import database
+            from data import database
             # Verwende die neu hinzugefügte close_db-Funktion
             database.close_db()
             logger.info("Datenbank wurde erfolgreich geschlossen")

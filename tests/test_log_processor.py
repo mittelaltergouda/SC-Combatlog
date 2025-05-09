@@ -8,9 +8,9 @@ from unittest.mock import patch, MagicMock
 # Pfad zum Projektverzeichnis hinzufügen, damit die Module importiert werden können
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import log_processor
-import config
-import database
+from log_processing import log_processor
+from core import config
+from data import database
 
 
 class TestLogProcessor(unittest.TestCase):
@@ -119,7 +119,7 @@ class TestLogProcessor(unittest.TestCase):
         self.assertEqual(total, 3, "Insgesamt sollten 3 Backup-Logs erkannt werden")
         self.assertEqual(imported, 2, "2 Logs sollten als importiert gezählt werden")
     
-    @patch('npc_handler.save_npc_category')
+    @patch('log_processing.npc_handler.save_npc_category')
     def test_npc_categorization(self, mock_save_category):
         """Test für die automatische NPC-Kategorisierung während der Logverarbeitung"""
         # Eine Test-Log-Datei mit NPC-Ereignissen erstellen

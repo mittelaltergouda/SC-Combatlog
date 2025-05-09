@@ -1,6 +1,6 @@
 import os
 import re
-import config
+from core import config
 import logging
 from datetime import datetime
 
@@ -9,8 +9,8 @@ if not config.CURRENT_PLAYER_NAME and os.path.exists(config.CONFIG_FILE):
     config.load_config()
 
 # Erst NACH dem Laden der Konfiguration weitere Module importieren
-import database
-import npc_handler
+from data import database
+from log_processing import npc_handler
 
 # Initialisiere den Logger korrekt
 logger = logging.getLogger(__name__)
@@ -18,17 +18,8 @@ logger = logging.getLogger(__name__)
 # Stelle sicher, dass die Datenbank initialisiert ist
 try:
     database.ensure_db_initialized()
-
-    # Prüfen, ob die file_positions Tabelle tatsächlich existiert
-    test = database.fetch_query("SELECT COUNT(*) FROM file_positions")
-except database.DatabaseError as e:
-    # Falls die Tabelle nicht existiert, führe init_db erneut aus
-    logger.error(f"Tabellenfehler erkannt: {str(e)}")
-    logger.info("Versuche Datenbank neu zu initialisieren...")
-    try:
-        database.init_db()  # Erneut ausführen, um fehlende Tabellen zu erstellen
-    except database.DatabaseError as db_error:
-        logger.critical(f"Datenbank konnte nicht initialisiert werden: {str(db_error)}")
+except Exception as e:
+    logger.error(f"Fehler bei der DB-Initialisierung: {str(e)}")
 
 ACTOR_DEATH_REGEX = re.compile(
     r"^<(?P<timestamp>[^>]+)>.*?<Actor Death>.*?'(?P<killed_player>[^']+)' \[\d+\].*?"
@@ -55,17 +46,18 @@ def process_log_file(file_path):
     logger.info(f"Starting to read log: {file_path}")
 
     try:
-        offset_res = database.fetch_query(
-            "SELECT last_offset FROM file_positions WHERE file_path = ?", (file_path,)
-        )
-        offset = offset_res[0][0] if offset_res else 0
+        from data.models import Kill, FilePosition
+        session = database.get_session()
+        offset_obj = session.query(FilePosition).filter_by(file_path=file_path).first()
+        offset = offset_obj.last_offset if offset_obj else 0
 
         new_events = []
         player = config.CURRENT_PLAYER_NAME.strip().lower() if config.CURRENT_PLAYER_NAME else ""
         if not player:
             logger.warning("Kein Spielername konfiguriert, überspringe Log-Verarbeitung")
+            session.close()
             return
-            
+
         with open(file_path, "r", encoding="utf-8", errors="replace") as f:
             f.seek(offset)
             for line in f:
@@ -85,61 +77,68 @@ def process_log_file(file_path):
                                 except Exception as e:
                                     logger.error(f"Fehler bei NPC-Kategorisierung: {str(e)}")
 
-                        new_events.append((
-                            event["timestamp"],
-                            event["killed_player"],
-                            event["killer"],
-                            event["zone"],
-                            event["weapon"],
-                            event["class"],
-                            event["damage_type"]
+                        new_events.append(Kill(
+                            timestamp=event["timestamp"],
+                            killed_player=event["killed_player"],
+                            killer=event["killer"],
+                            zone=event["zone"],
+                            weapon=event["weapon"],
+                            damage_class=event["class"],
+                            damage_type=event["damage_type"]
                         ))
 
         if new_events:
             try:
-                database.execute_many("""\
-                    INSERT OR IGNORE INTO kills (timestamp, killed_player, killer, zone, weapon, damage_class, damage_type)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, new_events)
+                session.add_all(new_events)
+                session.commit()
                 logger.info(f"Stored {len(new_events)} new events from {file_path}")
-            except database.DatabaseError as e:
+            except Exception as e:
+                session.rollback()
                 logger.error(f"Fehler beim Speichern von Ereignissen: {str(e)}")
                 # Tabellen neu initialisieren und erneut versuchen
                 try:
                     database.init_db()
-                    database.execute_many("""\
-                        INSERT OR IGNORE INTO kills (timestamp, killed_player, killer, zone, weapon, damage_class, damage_type)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
-                    """, new_events)
+                    session.add_all(new_events)
+                    session.commit()
                     logger.info(f"Nach Neuinitialisierung: {len(new_events)} Ereignisse gespeichert")
-                except database.DatabaseError as retry_error:
+                except Exception as retry_error:
+                    session.rollback()
                     logger.error(f"Speichern nach Neuinitialisierung fehlgeschlagen: {str(retry_error)}")
+                    session.close()
                     return  # Beenden, wenn auch nach Neuinitialisierung ein Fehler auftritt
 
         new_offset = os.path.getsize(file_path)
         try:
-            database.execute_query("""\
-                INSERT OR REPLACE INTO file_positions (file_path, last_offset)
-                VALUES (?, ?)
-            """, (file_path, new_offset))
-        except database.DatabaseError as e:
+            file_pos = session.query(FilePosition).filter_by(file_path=file_path).first()
+            if file_pos:
+                file_pos.last_offset = new_offset
+            else:
+                file_pos = FilePosition(file_path=file_path, last_offset=new_offset)
+                session.add(file_pos)
+            session.commit()
+        except Exception as e:
+            session.rollback()
             logger.error(f"Fehler beim Aktualisieren der Dateiposition: {str(e)}")
             # Tabellen neu initialisieren und erneut versuchen
             try:
                 database.init_db()
-                database.execute_query("""\
-                    INSERT OR REPLACE INTO file_positions (file_path, last_offset)
-                    VALUES (?, ?)
-                """, (file_path, new_offset))
-            except database.DatabaseError as retry_error:
+                file_pos = session.query(FilePosition).filter_by(file_path=file_path).first()
+                if file_pos:
+                    file_pos.last_offset = new_offset
+                else:
+                    file_pos = FilePosition(file_path=file_path, last_offset=new_offset)
+                    session.add(file_pos)
+                session.commit()
+            except Exception as retry_error:
+                session.rollback()
                 logger.error(f"Positionsaktualisierung nach Neuinitialisierung fehlgeschlagen: {str(retry_error)}")
-            
+        session.close()
     except Exception as e:
         logger.error(f"Allgemeiner Fehler bei der Verarbeitung von {file_path}: {str(e)}", exc_info=True)
         # Stellen Sie sicher, dass die Datenbank in einem konsistenten Zustand ist
         try:
             database.init_db()
-        except database.DatabaseError as db_error:
+        except Exception as db_error:
             logger.error(f"Datenbank-Neuinitialisierung nach Fehler fehlgeschlagen: {str(db_error)}")
 
     # Log finish
@@ -178,14 +177,14 @@ def get_backup_log_progress():
     imported = 0
     
     try:
+        from data.models import FilePosition
+        session = database.get_session()
         for lf in logs:
             full_path = os.path.join(config.BACKUP_FOLDER, lf)
-            res = database.fetch_query(
-                "SELECT last_offset FROM file_positions WHERE file_path = ?", (full_path,)
-            )
-            if res and res[0][0] > 0:
+            file_pos = session.query(FilePosition).filter_by(file_path=full_path).first()
+            if file_pos and file_pos.last_offset and file_pos.last_offset > 0:
                 imported += 1
-    except database.DatabaseError as e:
+        session.close()
+    except Exception as e:
         logger.error(f"Fehler beim Abrufen des Backup-Log-Fortschritts: {str(e)}")
-        
     return imported, total

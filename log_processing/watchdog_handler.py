@@ -1,7 +1,7 @@
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import config
-import log_processor
+from core import config
+from log_processing import log_processor
 import os
 
 class GameLogHandler(FileSystemEventHandler):
