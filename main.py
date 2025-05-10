@@ -1,5 +1,3 @@
-def main():
-
 """
 Star Citizen Griefing Counter REST-API Backend (FastAPI)
 - Endpunkte für Statistiken, Filter, Leaderboards, Events
@@ -147,8 +145,11 @@ def get_events(
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+def main():
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
 
-# --- Zusätzliche API-Endpunkte für Electron-Frontend ---
+if __name__ == "__main__":
+    main()
 import os
 import sqlite3
 from fastapi.responses import JSONResponse

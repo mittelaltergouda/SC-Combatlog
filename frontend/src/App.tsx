@@ -18,7 +18,7 @@ function App() {
   const [filters, setFilters] = useState<any>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const refreshInterval = useRef<NodeJS.Timeout | null>(null);
+  const refreshInterval = useRef<number | ReturnType<typeof setInterval> | null>(null);
   // Komfort: Dialog für Erststart
   const [showSetup, setShowSetup] = useState(false);
   const [setupPlayer, setSetupPlayer] = useState('');

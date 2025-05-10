@@ -1,9 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 
+
 type RecentEventsProps = {
   events: string;
 };
 
+const RecentEvents: React.FC<RecentEventsProps> = ({ events }) => {
   // Spieler-Namen im Text als Hyperlink auf RSI-Profil
   const linkifyNames = (text: string) => {
     return text.replace(/([A-Za-z0-9_\-]{3,})/g, (match) => {
@@ -33,6 +35,6 @@ type RecentEventsProps = {
       />
     </div>
   );
-}
+};
 
 export default RecentEvents;
