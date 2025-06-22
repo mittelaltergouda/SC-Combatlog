@@ -1,5 +1,7 @@
 # Star Citizen Griefing Counter - Abhängigkeiten
+# Stelle sicher, dass Python 3.x und pip installiert sind!
 watchdog>=3.0.0
 tkcalendar>=1.6.1
 packaging>=23.0
 requests>=2.31.0
+# Für Windows: pip sollte im PATH sein
